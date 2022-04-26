@@ -2,11 +2,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import passport from "passport";
 import dotenv from 'dotenv'
+import passportConfig from "./config/passport.js";
 
 dotenv.config()
 
 import postRoutes from './routes/posts.js';
+import users from "./routes/users.js";
 
 const app = express();
 
@@ -14,14 +17,16 @@ app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cors());
 
-app.use('/posts', postRoutes);
+// Routes
+app.use("/api/users", users);
+app.use('/api/posts', postRoutes);
 
+app.use(passport.initialize());
 
+// Passport config
+passportConfig(passport)
 
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use('/posts' , postRoutes);
 
 const CONNECTION_URL = process.env.DB_CONNECTION;
 const PORT = process.env.PORT || 5000;
